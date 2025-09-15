@@ -1,5 +1,5 @@
-const EmailNotificationStrategy = require('./strategies/EmailNotificationStrategy');
-const SMSNotificationStrategy = require('./strategies/SMSNotificationStrategy');
+const EmailNotificationStrategy = require('./strategies/emailNotificationStrategy');
+const SMSNotificationStrategy = require('./strategies/smsNotificationStrategy');
 
 class NotificationContext {
   constructor() {

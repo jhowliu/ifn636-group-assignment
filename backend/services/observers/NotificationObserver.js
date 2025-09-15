@@ -1,4 +1,4 @@
-const NotificationContext = require('../NotificationContext');
+const NotificationContext = require('../notificationContext');
 
 class NotificationObserver {
   static async handleAuctionEnd(auctionData) {

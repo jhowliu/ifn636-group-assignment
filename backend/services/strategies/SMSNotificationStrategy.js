@@ -1,4 +1,4 @@
-const NotificationStrategy = require('./NotificationStrategy');
+const NotificationStrategy = require('./notificationStrategy');
 
 class SMSNotificationStrategy extends NotificationStrategy {
   async sendWinnerNotification(recipient, auctionData) {
