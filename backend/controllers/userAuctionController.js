@@ -1,4 +1,5 @@
 const Auction = require('../models/Auction');
+const AuctionContext = require('../services/auctionContext');
 
 // POST auctions
 // create auction items
@@ -62,17 +63,14 @@ const updateAuction = async (req, res) => {
       });
     }
 
-    if (auction.seller.toString() !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        error: 'Not authorized to update this auction'
-      });
-    }
-
-    if (auction.totalBids > 0) {
+    const auctionContext = new AuctionContext(auction);
+    
+    try {
+      auctionContext.validateUpdate(req.body, req.user.id);
+    } catch (stateError) {
       return res.status(400).json({
         success: false,
-        error: 'Cannot update auction with existing bids'
+        error: stateError.message
       });
     }
 
@@ -119,17 +117,14 @@ const deleteAuction = async (req, res) => {
       });
     }
 
-    if (auction.seller.toString() !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        error: 'Not authorized to delete this auction'
-      });
-    }
-
-    if (auction.totalBids > 0) {
+    const auctionContext = new AuctionContext(auction);
+    
+    try {
+      auctionContext.validateDelete(req.user.id);
+    } catch (stateError) {
       return res.status(400).json({
         success: false,
-        error: 'Cannot delete auction with existing bids'
+        error: stateError.message
       });
     }
 

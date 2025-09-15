@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Auction = require('../models/Auction');
 const Bid = require('../models/Bid');
+const AuctionContext = require('../services/auctionContext');
 
 const placeBid = async (req, res) => {
   try {
@@ -17,32 +18,17 @@ const placeBid = async (req, res) => {
       });
     }
 
-    if (auction.seller.toString() === bidderId) {
+    const auctionContext = new AuctionContext(auction);
+    
+    try {
+      auctionContext.validateBid(amount, bidderId);
+    } catch (stateError) {
+      if (stateError.message === 'Auction has ended') {
+        await Auction.findByIdAndUpdate(auctionId, { status: 'ended' });
+      }
       return res.status(400).json({
         success: false,
-        error: 'Cannot bid on your own auction'
-      });
-    }
-
-    if (auction.status !== 'active') {
-      return res.status(400).json({
-        success: false,
-        error: 'Auction is not active'
-      });
-    }
-
-    if (new Date() > auction.endDate) {
-      await Auction.findByIdAndUpdate(auctionId, { status: 'ended' });
-      return res.status(400).json({
-        success: false,
-        error: 'Auction has ended'
-      });
-    }
-
-    if (amount <= auction.currentPrice) {
-      return res.status(400).json({
-        success: false,
-        error: `Bid must be higher than current price of $${auction.currentPrice}`
+        error: stateError.message
       });
     }
 
