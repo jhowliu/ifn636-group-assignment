@@ -12,11 +12,14 @@ class AuctionOperationTemplate {
     try {
       const auction = await this.loadAuction(req);
       
-      if (!auction) {
+      if (!auction && this.requiresExistingAuction()) {
         return this.handleNotFound(res);
       }
 
-      const auctionContext = new AuctionContext(auction);
+      let auctionContext = null;
+      if (auction) {
+        auctionContext = new AuctionContext(auction);
+      }
       
       this.validatePermissions(auction, req);
       
@@ -41,6 +44,12 @@ class AuctionOperationTemplate {
     return await Auction.findById(req.params.id)
       .populate('seller', 'name email')
       .populate('winner', 'name');
+  }
+
+  requiresExistingAuction() {
+    // Default: operations require existing auction
+    // CreateOperation should override this to return false
+    return true;
   }
 
   validatePermissions(auction, req) {

@@ -7,9 +7,9 @@ class CreateAuctionOperation extends AuctionOperationTemplate {
     return null;
   }
 
-  handleNotFound(res) {
-    // Override: Not applicable for create operation
-    // This method won't be called during create
+  requiresExistingAuction() {
+    // Override: Create operation doesn't require existing auction
+    return false;
   }
 
   async validateState(auctionContext, req) {
