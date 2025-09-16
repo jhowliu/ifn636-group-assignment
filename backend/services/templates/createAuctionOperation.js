@@ -2,7 +2,7 @@ const AuctionOperationTemplate = require('./auctionOperationTemplate');
 const Auction = require('../../models/Auction');
 
 class CreateAuctionOperation extends AuctionOperationTemplate {
-  async loadAuction(req) {
+  async loadAuction() {
     // Override: No need to load existing auction for create operation
     return null;
   }
@@ -12,10 +12,10 @@ class CreateAuctionOperation extends AuctionOperationTemplate {
     return false;
   }
 
-  async validateState(auctionContext, req) {
+  async validateState() {
     // Create operation doesn't need state validation
     // Basic validation can be done here if needed
-    const { title, description, startingPrice, category, startDate, endDate } = req.body;
+    const { title, description, startingPrice, category, startDate, endDate } = this.req.body;
     
     if (!title || !description || !startingPrice || !category || !startDate || !endDate) {
       throw new Error('Missing required fields');
@@ -30,8 +30,8 @@ class CreateAuctionOperation extends AuctionOperationTemplate {
     }
   }
 
-  async performOperation(auction, auctionContext, req) {
-    const { title, description, startingPrice, category, startDate, endDate, images } = req.body;
+  async performOperation() {
+    const { title, description, startingPrice, category, startDate, endDate, images } = this.req.body;
     
     const newAuction = new Auction({
       title,
@@ -41,7 +41,7 @@ class CreateAuctionOperation extends AuctionOperationTemplate {
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
       images: images || [],
-      seller: req.user.id
+      seller: this.req.user.id
     });
 
     const savedAuction = await newAuction.save();
@@ -54,16 +54,16 @@ class CreateAuctionOperation extends AuctionOperationTemplate {
     };
   }
 
-  sendSuccessResponse(res, result) {
-    return res.status(201).json({
+  sendSuccessResponse(result) {
+    return this.res.status(201).json({
       success: true,
       data: result.data,
       message: result.message
     });
   }
 
-  logOperation(auction, req, result) {
-    console.log(`New auction created: ${result.data._id} by user ${req.user.id}`);
+  logOperation(result) {
+    console.log(`New auction created: ${result.data._id} by user ${this.req.user.id}`);
   }
 }
 

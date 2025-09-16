@@ -4,17 +4,17 @@ const Bid = require('../../models/Bid');
 const Auction = require('../../models/Auction');
 
 class BidOperation extends AuctionOperationTemplate {
-  async validateState(auctionContext, req) {
-    const { amount } = req.body;
-    const bidderId = req.user.id;
+  async validateState() {
+    const { amount } = this.req.body;
+    const bidderId = this.req.user.id;
     
-    return auctionContext.validateBid(amount, bidderId);
+    return this.auctionContext.validateBid(amount, bidderId);
   }
 
-  async performOperation(auction, auctionContext, req) {
-    const { amount } = req.body;
-    const bidderId = req.user.id;
-    const auctionId = auction._id;
+  async performOperation() {
+    const { amount } = this.req.body;
+    const bidderId = this.req.user.id;
+    const auctionId = this.auction._id;
 
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -56,20 +56,19 @@ class BidOperation extends AuctionOperationTemplate {
     }
   }
 
-  handleError(res, error) {
+  handleError(error) {
     if (error.message === 'Auction has ended') {
       // Update auction status if needed
-      const auctionId = res.req.params.id;
+      const auctionId = this.req.params.id;
       if (auctionId) {
         Auction.findByIdAndUpdate(auctionId, { status: 'ended' }).catch(console.error);
       }
     }
-    return super.handleError(res, error);
+    return super.handleError(error);
   }
 
-  logOperation(auction, req, result) {
-    console.log(`Bid of $${req.body.amount} placed on auction ${auction._id} by user ${req.user.id}`);
-    console.log(JSON.stringify(result));
+  logOperation(result) {
+    console.log(`Bid of $${this.req.body.amount} placed on auction ${this.auction._id} by user ${this.req.user.id}`);
   }
 }
 

@@ -6,42 +6,48 @@ class AuctionOperationTemplate {
     if (new.target === AuctionOperationTemplate) {
       throw new Error('AuctionOperationTemplate is abstract and cannot be instantiated directly');
     }
+    this.req = null;
+    this.res = null;
+    this.auction = null;
+    this.auctionContext = null;
   }
 
   async execute(req, res) {
     try {
-      const auction = await this.loadAuction(req);
+      this.req = req;
+      this.res = res;
       
-      if (!auction && this.requiresExistingAuction()) {
-        return this.handleNotFound(res);
+      this.auction = await this.loadAuction();
+      
+      if (!this.auction && this.requiresExistingAuction()) {
+        return this.handleNotFound();
       }
 
-      let auctionContext = null;
-      if (auction) {
-        auctionContext = new AuctionContext(auction);
+      if (this.auction) {
+        this.auctionContext = new AuctionContext(this.auction);
       }
       
-      this.validatePermissions(auction, req);
+      this.validatePermissions();
       
-      await this.validateState(auctionContext, req);
+      await this.validateState();
       
-      const result = await this.performOperation(auction, auctionContext, req);
+      const result = await this.performOperation();
       
-      this.logOperation(auction, req, result);
+      this.logOperation(result);
       
-      return this.sendSuccessResponse(res, result);
+      return this.sendSuccessResponse(result);
       
     } catch (error) {
-      return this.handleError(res, error);
+      return this.handleError(error);
     }
   }
 
-  async loadAuction(req) {
-    if (!req.params.id) {
+  async loadAuction() {
+    if (!this.req.params.id) {
       return null;
     }
     
-    return await Auction.findById(req.params.id)
+    return await Auction.findById(this.req.params.id)
       .populate('seller', 'name email')
       .populate('winner', 'name');
   }
@@ -52,32 +58,32 @@ class AuctionOperationTemplate {
     return true;
   }
 
-  validatePermissions(auction, req) {
+  validatePermissions() {
     // Default: no permission validation
     // Subclasses can override this
   }
 
-  async validateState(auctionContext, req) {
+  async validateState() {
     // Default: no state validation
     // Subclasses must implement specific validation
     throw new Error('validateState method must be implemented by subclasses');
   }
 
-  async performOperation(auction, auctionContext, req) {
+  async performOperation() {
     // Abstract method - must be implemented by subclasses
     throw new Error('performOperation method must be implemented by subclasses');
   }
 
-  handleNotFound(res) {
-    return res.status(404).json({
+  handleNotFound() {
+    return this.res.status(404).json({
       success: false,
       error: 'Auction not found'
     });
   }
 
-  handleError(res, error) {
+  handleError(error) {
     const statusCode = this.getErrorStatusCode(error);
-    return res.status(statusCode).json({
+    return this.res.status(statusCode).json({
       success: false,
       error: error.message
     });
@@ -96,12 +102,17 @@ class AuctionOperationTemplate {
     return 500;
   }
 
-  sendSuccessResponse(res, result) {
-    return res.json({
+  sendSuccessResponse(result) {
+    return this.res.json({
       success: true,
       data: result.data,
       message: result.message || 'Operation completed successfully'
     });
+  }
+
+  logOperation(result) {
+    const operationName = this.constructor.name.replace('Operation', '');
+    console.log(`${operationName} operation performed by user ${this.req.user?.id}`);
   }
 
   getOperationName() {

@@ -2,7 +2,6 @@ const CreateAuctionOperation = require('../services/templates/createAuctionOpera
 const UpdateAuctionOperation = require('../services/templates/updateAuctionOperation');
 const DeleteAuctionOperation = require('../services/templates/deleteAuctionOperation');
 const Auction = require('../models/Auction');
-const AuctionContext = require('../services/auctionContext');
 
 const createOperation = new CreateAuctionOperation();
 const updateOperation = new UpdateAuctionOperation();
