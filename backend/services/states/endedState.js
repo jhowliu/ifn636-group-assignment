@@ -6,11 +6,17 @@ class EndedState extends AuctionState {
   }
 
   canUpdate() {
+    if (this.ctx.auction.totalBids === 0 && !this.ctx.auction.winner) {
+      return true
+    }
     throw new Error('Cannot update ended auction');
   }
 
   canDelete() {
-    throw new Error('Cannot delete ended auction');
+    if (this.ctx.auction.totalBids === 0 && !this.ctx.auction.winner) {
+      return true;
+    }
+    throw new Error('Cannot delete ended auction with bids or winner');
   }
 
   canEnd() {
@@ -30,11 +36,29 @@ class EndedState extends AuctionState {
   }
 
   processUpdate(updates, userId) {
-    throw new Error('Cannot update ended auction');
+    this.validateUpdate(userId);
+    
+    if (!this.canUpdate()) {
+      throw new Error('Cannot update auction in current state');
+    }
+
+    return {
+      isValid: true,
+      message: 'Auction can be updated'
+    };
   }
 
   processDelete(userId) {
-    throw new Error('Cannot delete ended auction');
+    this.validateDelete(userId);
+    
+    if (!this.canDelete()) {
+      throw new Error('Cannot delete auction in current state');
+    }
+
+    return {
+      isValid: true,
+      message: 'Auction can be deleted'
+    };
   }
 
   getAuctionSummary() {

@@ -117,7 +117,7 @@ const AuctionForm = ({ isEdit = false }) => {
         navigate("/my-auctions");
       }
     } catch (err) {
-      setError(err.response?.data?.error || err.message || `Failed to ${isEdit ? 'update' : 'create'} auction`);
+      setError(err.response?.data?.message || err.response?.data?.error || err.message || `Failed to ${isEdit ? 'update' : 'create'} auction`);
     } finally {
       setLoading(false);
     }

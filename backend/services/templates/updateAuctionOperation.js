@@ -3,7 +3,7 @@ const Auction = require('../../models/Auction');
 
 class UpdateAuctionOperation extends AuctionOperationTemplate {
   validatePermissions(auction, req) {
-    if (auction.seller.toString() !== req.user.id) {
+    if (auction.seller.id !== req.user.id) {
       throw new Error('Not authorized to update this auction');
     }
   }
