@@ -2,31 +2,31 @@ const AuctionOperationTemplate = require('./auctionOperationTemplate');
 const Auction = require('../../models/Auction');
 
 class UpdateAuctionOperation extends AuctionOperationTemplate {
-  validatePermissions(auction, req) {
-    if (auction.seller.id !== req.user.id) {
+  validatePermissions() {
+    if (this.auction.seller.id !== this.req.user.id) {
       throw new Error('Not authorized to update this auction');
     }
   }
 
-  async validateState(auctionContext, req) {
-    return auctionContext.validateUpdate(req.body, req.user.id);
+  async validateState() {
+    return this.auctionContext.validateUpdate(this.req.body, this.req.user.id);
   }
 
-  async performOperation(auction, auctionContext, req) {
+  async performOperation() {
     const allowedUpdates = ['title', 'startingPrice', 'currentPrice', 'description', 'images', 'endDate'];
     const updates = {};
     
     allowedUpdates.forEach(field => {
-      if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
+      if (this.req.body[field] !== undefined) {
+        updates[field] = this.req.body[field];
         if (field === 'startingPrice') {
-          updates['currentPrice'] = req.body[field];
+          updates['currentPrice'] = this.req.body[field];
         }
       }
     });
 
     const updatedAuction = await Auction.findByIdAndUpdate(
-      auction._id,
+      this.auction._id,
       updates,
       { new: true, runValidators: true }
     ).populate('seller', 'name email');
@@ -37,9 +37,9 @@ class UpdateAuctionOperation extends AuctionOperationTemplate {
     };
   }
 
-  logOperation(auction, req, result) {
-    const updatedFields = Object.keys(req.body).join(', ');
-    console.log(`Auction ${auction._id} updated by user ${req.user.id}. Fields: ${updatedFields}`);
+  logOperation(result) {
+    const updatedFields = Object.keys(this.req.body).join(', ');
+    console.log(`Auction ${this.auction._id} updated by user ${this.req.user.id}. Fields: ${updatedFields}`);
   }
 }
 

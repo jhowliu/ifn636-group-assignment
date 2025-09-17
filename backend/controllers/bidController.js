@@ -3,8 +3,6 @@ const Bid = require('../models/Bid');
 
 const bidOperation = new BidOperation();
 
-const bidOperation = new BidOperation();
-
 const placeBid = async (req, res) => {
   return await bidOperation.execute(req, res);
 };

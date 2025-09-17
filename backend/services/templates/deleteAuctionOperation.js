@@ -2,19 +2,18 @@ const AuctionOperationTemplate = require('./auctionOperationTemplate');
 const Auction = require('../../models/Auction');
 
 class DeleteAuctionOperation extends AuctionOperationTemplate {
-  validatePermissions(auction, req) {
-    console.log(auction.seller.id, req.user.id, auction.seller)
-    if (auction.seller.id !== req.user.id) {
+  validatePermissions() {
+    if (this.auction.seller.id !== this.req.user.id) {
       throw new Error('Not authorized to delete this auction');
     }
   }
 
-  async validateState(auctionContext, req) {
-    return auctionContext.validateDelete(req.user.id);
+  async validateState() {
+    return this.auctionContext.validateDelete(this.req.user.id);
   }
 
-  async performOperation(auction, auctionContext, req) {
-    await Auction.findByIdAndDelete(auction._id);
+  async performOperation() {
+    await Auction.findByIdAndDelete(this.auction._id);
 
     return {
       data: null,
@@ -22,8 +21,8 @@ class DeleteAuctionOperation extends AuctionOperationTemplate {
     };
   }
 
-  logOperation(auction, req, result) {
-    console.log(`Auction ${auction._id} deleted by user ${req.user.id}`);
+  logOperation(result) {
+    console.log(`Auction ${this.auction._id} deleted by user ${this.req.user.id}`);
   }
 }
 
