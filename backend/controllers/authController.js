@@ -2,6 +2,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const BasicUser = require('../services/decorators/basicUser');
+const ProfileUserDecorator = require('../services/decorators/profileUserDecorator');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -40,13 +42,12 @@ const getProfile = async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-  
-      res.status(200).json({
-        name: user.name,
-        email: user.email,
-        university: user.university,
-        address: user.address,
-      });
+
+      const basicUser = new BasicUser(user);
+      const profileUser = new ProfileUserDecorator(basicUser);
+      const userInfo = profileUser.getUserInfo();
+
+      res.status(200).json(userInfo);
     } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
     }

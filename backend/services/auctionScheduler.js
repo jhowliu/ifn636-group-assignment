@@ -1,8 +1,11 @@
 const Auction = require('../models/Auction');
 const Bid = require('../models/Bid');
+const EventEmitter = require('./eventEmitter');
+const AuctionContext = require('./auctionContext');
 
-class AuctionTimerService {
+class AuctionTimerService extends EventEmitter {
   constructor() {
+    super();
     if (AuctionTimerService.instance) {
       return AuctionTimerService.instance;
     }
@@ -44,7 +47,19 @@ class AuctionTimerService {
     try {
       const auction = await Auction.findById(auctionId);
       
-      if (!auction || auction.status !== 'active') {
+      if (!auction) {
+        return;
+      }
+
+      const auctionContext = new AuctionContext(auction);
+      
+      try {
+        const state = auctionContext.getState();
+        if (!state.canEnd(auction)) {
+          return;
+        }
+      } catch (stateError) {
+        console.log(`Cannot end auction ${auctionId}: ${stateError.message}`);
         return;
       }
 
@@ -65,14 +80,19 @@ class AuctionTimerService {
         console.log(`Auction ${auctionId} ended with no bids`);
       }
 
+      auctionContext.validateTransition('ended');
       await Auction.findByIdAndUpdate(auctionId, updateData);
       
-      return {
+      const auctionEndData = {
         auctionId,
         winner: highestBid?.bidder,
         winningAmount: highestBid?.amount,
         hasBids: !!highestBid
       };
+
+      this.emit('auctionEnded', auctionEndData);
+      
+      return auctionEndData;
       
     } catch (error) {
       console.error(`Error declaring winner for auction ${auctionId}:`, error);
@@ -136,5 +156,5 @@ module.exports = {
   AuctionTimerService,
   checkEndedAuctions,
   startAuctionScheduler,
-  declareAuctionWinner
+  declareAuctionWinner,
 };

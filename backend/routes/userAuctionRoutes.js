@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/authMiddleware');
-const { validateAuctionData } = require('../middleware/validation');
+const { requireAuth } = require('../middleware/authChain');
+const { auctionValidationChain } = require('../middleware/auctionValidationChain');
 const {
   createAuction,
   updateAuction,
@@ -9,9 +9,9 @@ const {
   deleteAuction,
 } = require('../controllers/userAuctionController')
 
-router.get('/', protect, getUserAuctions);
-router.post('/', protect, validateAuctionData, createAuction);
-router.put('/:id', protect, updateAuction);
-router.delete('/:id', protect, deleteAuction);
+router.get('/', requireAuth, getUserAuctions);
+router.post('/', auctionValidationChain, createAuction);
+router.put('/:id', requireAuth, updateAuction);
+router.delete('/:id', requireAuth, deleteAuction);
 
 module.exports = router;
