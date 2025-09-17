@@ -1,8 +1,10 @@
 const Auction = require('../models/Auction');
 const Bid = require('../models/Bid');
+const EventEmitter = require('./eventEmitter');
 
-class AuctionTimerService {
+class AuctionTimerService extends EventEmitter {
   constructor() {
+    super();
     if (AuctionTimerService.instance) {
       return AuctionTimerService.instance;
     }
@@ -67,12 +69,16 @@ class AuctionTimerService {
 
       await Auction.findByIdAndUpdate(auctionId, updateData);
       
-      return {
+      const auctionEndData = {
         auctionId,
         winner: highestBid?.bidder,
         winningAmount: highestBid?.amount,
         hasBids: !!highestBid
       };
+
+      this.emit('auctionEnded', auctionEndData);
+      
+      return auctionEndData;
       
     } catch (error) {
       console.error(`Error declaring winner for auction ${auctionId}:`, error);
@@ -136,5 +142,5 @@ module.exports = {
   AuctionTimerService,
   checkEndedAuctions,
   startAuctionScheduler,
-  declareAuctionWinner
+  declareAuctionWinner,
 };
