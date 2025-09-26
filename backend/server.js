@@ -3,9 +3,9 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const { connectDB } = require('./services/databaseService');
 const { AuctionTimerService, startAuctionScheduler } = require('./services/auctionScheduler.js');
-const NotificationObserver = require('./services/observers/NotificationObserver');
-const AnalyticsObserver = require('./services/observers/AnalyticsObserver');
-const PaymentObserver = require('./services/observers/PaymentObserver');
+const NotificationObserver = require('./services/observers/notificationObserver');
+const AnalyticsObserver = require('./services/observers/analyticsObserver');
+const PaymentObserver = require('./services/observers/paymentObserver');
 
 dotenv.config();
 
