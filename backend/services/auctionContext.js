@@ -1,6 +1,5 @@
 const ActiveState = require('./states/ActiveState');
 const EndedState = require('./states/EndedState');
-const CancelledState = require('./states/CancelledState');
 
 class AuctionContext {
   constructor(auction) {
@@ -8,7 +7,6 @@ class AuctionContext {
     this.states = {
       active: new ActiveState(this),
       ended: new EndedState(this),
-      cancelled: new CancelledState(this)
     };
   }
 

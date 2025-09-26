@@ -35,7 +35,7 @@ class AuctionState {
       throw new Error('Auction not found');
     }
 
-    if (this.ctx.auction.seller.toString() === bidderId) {
+    if (this.ctx.auction.seller.id === bidderId) {
       throw new Error('Cannot bid on your own auction');
     }
 
@@ -49,7 +49,7 @@ class AuctionState {
       throw new Error('Auction not found');
     }
 
-    if (this.ctx.auction.seller.toString() !== userId) {
+    if (this.ctx.auction.seller.id !== userId) {
       throw new Error('Not authorized to update this auction');
     }
   }
@@ -59,7 +59,7 @@ class AuctionState {
       throw new Error('Auction not found');
     }
 
-    if (this.ctx.auction.seller.toString() !== userId) {
+    if (this.ctx.auction.seller.id !== userId) {
       throw new Error('Not authorized to delete this auction');
     }
   }

@@ -1,6 +1,5 @@
 const BidOperation = require('../services/templates/BidOperation');
 const Bid = require('../models/Bid');
-const AuctionContext = require('../services/auctionContext');
 
 const bidOperation = new BidOperation();
 

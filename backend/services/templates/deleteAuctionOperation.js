@@ -3,7 +3,7 @@ const Auction = require('../../models/Auction');
 
 class DeleteAuctionOperation extends AuctionOperationTemplate {
   validatePermissions() {
-    if (this.auction.seller.toString() !== this.req.user.id) {
+    if (this.auction.seller.id !== this.req.user.id) {
       throw new Error('Not authorized to delete this auction');
     }
   }
