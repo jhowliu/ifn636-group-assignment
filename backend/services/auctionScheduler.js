@@ -1,6 +1,7 @@
 const Auction = require('../models/Auction');
 const Bid = require('../models/Bid');
 const EventEmitter = require('./eventEmitter');
+const AuctionContext = require('./auctionContext');
 
 class AuctionTimerService extends EventEmitter {
   constructor() {
@@ -46,7 +47,19 @@ class AuctionTimerService extends EventEmitter {
     try {
       const auction = await Auction.findById(auctionId);
       
-      if (!auction || auction.status !== 'active') {
+      if (!auction) {
+        return;
+      }
+
+      const auctionContext = new AuctionContext(auction);
+      
+      try {
+        const state = auctionContext.getState();
+        if (!state.canEnd(auction)) {
+          return;
+        }
+      } catch (stateError) {
+        console.log(`Cannot end auction ${auctionId}: ${stateError.message}`);
         return;
       }
 
@@ -67,6 +80,7 @@ class AuctionTimerService extends EventEmitter {
         console.log(`Auction ${auctionId} ended with no bids`);
       }
 
+      auctionContext.validateTransition('ended');
       await Auction.findByIdAndUpdate(auctionId, updateData);
       
       const auctionEndData = {

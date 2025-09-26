@@ -18,7 +18,7 @@ class NotificationObserver {
           await notificationContext.sendWinnerNotification(winner, auctionData, 'sms');
         }
       } else {
-        console.log(`📧 Sending no-bids notification for auction ${auctionId}`);
+        console.log(`Sending no-bids notification for auction ${auctionId}`);
         
         // TODO: Get auction creator information and send no-bids notification
         // const auctionCreator = await getAuctionCreator(auctionId);
