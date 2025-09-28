@@ -1,4 +1,3 @@
-
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { placeBid, getBidsForAuction } = require('../controllers/bidController');
@@ -28,7 +27,7 @@ describe('Bid Controller', () => {
       executeStub = sandbox.stub(BidOperation.prototype, 'execute');
     });
 
-    it('should call execute method of BidOperation and response', async () => {
+    it('should return a success when a bid is placed', async () => {
         executeStub.callsFake(async (req, res) => {
             res.json({ success: true, placed: true, amount: req.body.amount, bidder: req.user.id });
         });
@@ -43,7 +42,7 @@ describe('Bid Controller', () => {
         bidder: 'u1' })).to.be.true;
     });
 
-    it('should handle when service sets an error status', async () => {
+    it('should return an error when a bid fails', async () => {
         executeStub.callsFake(async (req, res) => {
             res.status(400).json({ success: false, message: 'Bid too low' });
         });
@@ -80,7 +79,7 @@ describe('Bid Controller', () => {
       countStub = sandbox.stub(Bid, 'countDocuments').resolves(2);
     });
 
-    it('should return bids for an auction sorted by bidTime desc', async () => {
+    it('should return auction bids in newest-first order', async () => {
       await getBidsForAuction(req, res);
 
       expect(findStub.calledWith({ auction: '1' })).to.be.true;

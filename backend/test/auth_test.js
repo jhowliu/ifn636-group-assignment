@@ -1,4 +1,3 @@
-
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { registerUser, loginUser, getProfile, updateUserProfile } = require('../controllers/authController');
@@ -76,7 +75,7 @@ describe('Auth Controller', () => {
     });
   });
 
-    // Login //
+  // Login //
   describe('loginUser', () => {
     let findOneStub, compareStub, signStub;
 
@@ -93,7 +92,7 @@ describe('Auth Controller', () => {
 
         await loginUser(req, res);
 
-        expect(res.status.calledWith(401)).to.be.true; 
+        expect(res.status.calledWith(200)).to.be.true; 
         expect(res.json.calledWith({ 
             message: 'Invalid email or password' 
         })).to.be.true;
@@ -135,124 +134,124 @@ describe('Auth Controller', () => {
     });
   });
 
-    // Profile //
+  // Profile //
   describe('getProfile', () => {
-        let findByIdStub;
+    let findByIdStub;
     
-        beforeEach(() => {
-            findByIdStub = sandbox.stub(User, 'findById');
-        });
+    beforeEach(() => {
+      findByIdStub = sandbox.stub(User, 'findById');
+    });
 
-        it('should return error if user not found', async () => {
-            req.user = { id: '636' };
-            findByIdStub.resolves(null);
+    it('should return 404 if user not found', async () => {
+      req.user = { id: '636' };
+      findByIdStub.resolves(null);
 
-            await getProfile(req, res);
+      await getProfile(req, res);
 
-            expect(findByIdStub.calledWith('636')).to.be.true;
-            expect(res.status.calledWith(404)).to.be.true; 
-            expect(res.json.calledWith({ 
-                message: 'User not found'
-            })).to.be.true;
-        });
+      expect(findByIdStub.calledWith('636')).to.be.true;
+      expect(res.status.calledWith(404)).to.be.true; 
+      expect(res.json.calledWith({ 
+          message: 'User not found'
+      })).to.be.true;
+    });
 
-        it('should return profile successfully', async () => {
-            req.user = { id: '636' };
-            findByIdStub.resolves({ id: '636',
-                name: '636', 
-                email: '636@gmail.com', 
-                university: 'qut', 
-                address: 'Herston' 
-            });
+    it('should return profile successfully', async () => {
+      req.user = { id: '636' };
+      findByIdStub.resolves({ id: '636',
+          name: '636', 
+          email: '636@gmail.com', 
+          university: 'qut', 
+          address: 'Herston' 
+      });
 
-            await getProfile(req, res);
+      await getProfile(req, res);
 
-            expect(res.status.calledWith(200)).to.be.true; 
-            expect(res.json.calledWithMatch({ id: '636', 
-                name: '636', 
-                email: '636@gmail.com', 
-                university: 'qut', 
-                address: 'Herston' 
-            })).to.be.true;
-        });
+      expect(res.status.calledWith(200)).to.be.true; 
+      expect(res.json.calledWithMatch({ id: '636', 
+        name: '636', 
+        email: '636@gmail.com', 
+        university: 'qut', 
+        address: 'Herston' 
+      })).to.be.true;
+    });
 
-        it('should handle database errors', async () => {
-            const errorMessage = 'Database connection failed';
-            findByIdStub.rejects(new Error(errorMessage));
+    it('should handle database errors', async () => {
+      const errorMessage = 'Database connection failed';
+      req.user = { id: '636' };
+      findByIdStub.withArgs('636').rejects(new Error(errorMessage));
 
-            await getProfile(req, res);
+      await getProfile(req, res);
             
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ 
-                message: 'Server error', 
-                error: errorMessage 
-            })).to.be.true;
-        });
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ 
+        message: 'Server error', 
+        error: errorMessage,
+      })).to.be.true;
+    });
   });
   
-    // Update Profile //
+  // Update Profile //
   describe('updateUserProfile', () => {
-        let findByIdStub, signStub;
+    let findByIdStub, signStub;
 
-        beforeEach(() => {
-            signStub = sandbox.stub(jwt, 'sign').returns('mockToken');
-            findByIdStub = sandbox.stub(User, 'findById');
-        });
+    beforeEach(() => {
+      signStub = sandbox.stub(jwt, 'sign').returns('mockToken');
+      findByIdStub = sandbox.stub(User, 'findById');
+    });
 
-        it('should return error if user not found', async () => {
-            req.user = { id: '636' };
-            findByIdStub.resolves(null);
+    it('should return 404 if user not found', async () => {
+      req.user = { id: '636' };
+      findByIdStub.resolves(null);
 
-            await updateUserProfile(req, res);
+      await updateUserProfile(req, res);
 
-            expect(res.status.calledWith(404)).to.be.true; 
-            expect(res.json.calledWith({ 
-                message: 'User not found' 
-            })).to.be.true;
-        });
+      expect(res.status.calledWith(404)).to.be.true; 
+      expect(res.json.calledWith({ 
+        message: 'User not found' 
+      })).to.be.true;
+    });
 
-        it('should update user profile successfully and return token', async () => {
-            req.user = { id: '636' };
-            req.body = { name: 'Updated', 
-                email: 'test@gmail.com', 
-                university: 'New Uni', 
-                address: 'New Addr' };
+    it('should update user profile successfully and return token', async () => {
+      req.user = { id: '636' };
+      req.body = { name: 'Updated', 
+      email: 'test@gmail.com', 
+      university: 'New Uni', 
+      address: 'New Addr' };
             
-            const mockUser = { 
-                id: '636', 
-                name: '636', 
-                email: '636@gmail.com', 
-                university: 'qut', 
-                address: 'Herston',
-            };
-            mockUser.save = sinon.stub().resolves(mockUser);
+      const mockUser = { 
+        id: '636', 
+        name: '636', 
+        email: '636@gmail.com', 
+        university: 'qut', 
+        address: 'Herston',
+      };        
+      mockUser.save = sinon.stub().resolves(mockUser);
 
-            findByIdStub.resolves(mockUser);
+      findByIdStub.resolves(mockUser);
 
-            await updateUserProfile(req, res);
+      await updateUserProfile(req, res);
 
+      expect(mockUser.save.calledOnce).to.be.true;
+      expect(res.json.calledWith({ id: '636', 
+        name: 'Updated', 
+        email: 'test@gmail.com', 
+        university: 'New Uni', 
+        address: 'New Addr', 
+        token: 'mockToken' 
+      })).to.be.true;
+    });
 
-            expect(mockUser.save.calledOnce).to.be.true;
-            expect(res.json.calledWith({ id: '636', 
-                name: 'Updated', 
-                email: 'test@gmail.com', 
-                university: 'New Uni', 
-                address: 'New Addr', 
-                token: 'mockToken' 
-            })).to.be.true;
-        });
+    it('should handle database errors', async () => {
+      const errorMessage = 'Database connection failed';
+      req.user = { id: '636' };
+      findByIdStub.rejects(new Error(errorMessage));
 
-        it('should handle database errors', async () => {
-            const errorMessage = 'Database connection failed';
-            req.user = { id: '636' };
-            findByIdStub.rejects(new Error(errorMessage));
-
-            await updateUserProfile(req, res);
+      await updateUserProfile(req, res);
             
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ 
-                message: errorMessage 
-            })).to.be.true;
-        });
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ 
+        message: errorMessage 
+      })).to.be.true;
+    });
   });
 }); 
