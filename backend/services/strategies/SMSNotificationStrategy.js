@@ -16,45 +16,13 @@ class SMSNotificationStrategy extends NotificationStrategy {
       console.log(`Message: ${smsMessage}`);
       
       // TODO: Implement actual SMS sending logic
-      // await smsService.send({
-      //   to: recipient.phone,
-      //   body: smsMessage
-      // });
+      
       
       console.log(`Winner SMS sent successfully to ${recipient.phone}`);
       return { success: true, method: 'sms', recipient: recipient.phone };
       
     } catch (error) {
       console.error(`Failed to send winner SMS to ${recipient.phone}:`, error);
-      throw error;
-    }
-  }
-
-  async sendNoBidsNotification(recipient, auctionData) {
-    this.validateRecipient(recipient);
-    
-    if (!recipient.phone) {
-      throw new Error('Phone number is required for SMS notifications');
-    }
-
-    const { message } = this.formatAuctionMessage(auctionData, 'noBids');
-    const smsMessage = this.formatSMSMessage(message, auctionData);
-    
-    try {
-      console.log(`Sending no-bids SMS to: ${recipient.phone}`);
-      console.log(`Message: ${smsMessage}`);
-      
-      // TODO: Implement actual SMS sending logic
-      // await smsService.send({
-      //   to: recipient.phone,
-      //   body: smsMessage
-      // });
-      
-      console.log(`No-bids SMS sent successfully to ${recipient.phone}`);
-      return { success: true, method: 'sms', recipient: recipient.phone };
-      
-    } catch (error) {
-      console.error(`Failed to send no-bids SMS to ${recipient.phone}:`, error);
       throw error;
     }
   }

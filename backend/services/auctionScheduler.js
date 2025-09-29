@@ -65,7 +65,7 @@ class AuctionTimerService extends EventEmitter {
 
       const highestBid = await Bid.findOne({ auction: auctionId })
         .sort({ amount: -1 })
-        .populate('bidder', 'name');
+        .populate('bidder', 'name email');
 
       const updateData = { 
         status: 'ended',
