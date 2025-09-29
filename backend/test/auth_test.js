@@ -92,7 +92,7 @@ describe('Auth Controller', () => {
 
         await loginUser(req, res);
 
-        expect(res.status.calledWith(200)).to.be.true; 
+        expect(res.status.calledWith(401)).to.be.true; 
         expect(res.json.calledWith({ 
             message: 'Invalid email or password' 
         })).to.be.true;

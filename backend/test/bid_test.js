@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const { placeBid, getBidsForAuction } = require('../controllers/bidController');
 const Bid = require('../models/Bid');
-const BidOperation = require('../services/templates/BidOperation');
+const BidOperation = require('../services/templates/bidOperation');
 
 describe('Bid Controller', () => {
   let req, res, sandbox, executeStub;
