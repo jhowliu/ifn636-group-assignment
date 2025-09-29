@@ -3,6 +3,7 @@ const NotificationStrategy = require('./notificationStrategy');
 class EmailNotificationStrategy extends NotificationStrategy {
   async sendWinnerNotification(recipient, auctionData) {
     this.validateRecipient(recipient);
+    console.log(recipient);
     
     if (!recipient.email) {
       throw new Error('Email address is required for email notifications');
@@ -16,49 +17,12 @@ class EmailNotificationStrategy extends NotificationStrategy {
       console.log(`Message: ${message}`);
       
       // TODO: Implement actual email sending logic
-      // await emailService.send({
-      //   to: recipient.email,
-      //   subject: subject,
-      //   html: this.generateEmailTemplate(message, auctionData),
-      //   text: message
-      // });
       
       console.log(`Winner email sent successfully to ${recipient.email}`);
       return { success: true, method: 'email', recipient: recipient.email };
       
     } catch (error) {
       console.error(`Failed to send winner email to ${recipient.email}:`, error);
-      throw error;
-    }
-  }
-
-  async sendNoBidsNotification(recipient, auctionData) {
-    this.validateRecipient(recipient);
-    
-    if (!recipient.email) {
-      throw new Error('Email address is required for email notifications');
-    }
-
-    const { subject, message } = this.formatAuctionMessage(auctionData, 'noBids');
-    
-    try {
-      console.log(`Sending no-bids email to: ${recipient.email}`);
-      console.log(`Subject: ${subject}`);
-      console.log(`Message: ${message}`);
-      
-      // TODO: Implement actual email sending logic
-      // await emailService.send({
-      //   to: recipient.email,
-      //   subject: subject,
-      //   html: this.generateEmailTemplate(message, auctionData),
-      //   text: message
-      // });
-      
-      console.log(`No-bids email sent successfully to ${recipient.email}`);
-      return { success: true, method: 'email', recipient: recipient.email };
-      
-    } catch (error) {
-      console.error(`Failed to send no-bids email to ${recipient.email}:`, error);
       throw error;
     }
   }

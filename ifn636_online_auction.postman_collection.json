@@ -1,0 +1,271 @@
+{
+	"info": {
+		"_postman_id": "53e7087a-400c-4bbd-97d5-b8c308e43e50",
+		"name": "Auction Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3670344",
+		"_collection_link": "https://lunar-star-789758.postman.co/workspace/Team-Workspace~00329a39-f5d7-41f5-8527-98d6aed0dbac/collection/3670344-53e7087a-400c-4bbd-97d5-b8c308e43e50?action=share&source=collection_link&creator=3670344"
+	},
+	"item": [
+		{
+			"name": "Get auctions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auctions?",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auctions"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user own auctions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/users/auctions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"auctions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"jay2@gmail.com\",\n    \"name\": \"jay2\",\n    \"password\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"jay2@gmail.com\",\n    \"password\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create user auction",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"test1\",\n    \"description\": \"test by postman\",\n    \"startingPrice\": \"10\",\n    \"category\": \"Home\",\n    \"startDate\": \"2025-09-15T11:32:20.220Z\",\n    \"endDate\":  \"2025-09-15T11:35:20.220Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/auctions?",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"auctions"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Place Bid",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": 1000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auctions/{{auction_id}}/bids",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auctions",
+						"{{auction_id}}",
+						"bids"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user auction",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"images\": [\"https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/auctions/{{auction_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"auctions",
+						"{{auction_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user auction",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"test update by postman\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/auctions/{{auction_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"auctions",
+						"{{auction_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get auction by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_uri}}/auctions/{{auction_id}}",
+					"host": [
+						"{{base_uri}}"
+					],
+					"path": [
+						"auctions",
+						"{{auction_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

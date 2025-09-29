@@ -31,16 +31,6 @@ class NotificationContext {
     return await strategy.sendWinnerNotification(recipient, auctionData);
   }
 
-  async sendNoBidsNotification(recipient, auctionData, method = 'email') {
-    const strategy = this.strategies[method];
-    
-    if (!strategy) {
-      throw new Error(`Notification strategy '${method}' not found`);
-    }
-
-    return await strategy.sendNoBidsNotification(recipient, auctionData);
-  }
-
   getAvailableStrategies() {
     return Object.keys(this.strategies);
   }
