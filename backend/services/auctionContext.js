@@ -1,5 +1,5 @@
-const ActiveState = require('./states/ActiveState');
-const EndedState = require('./states/EndedState');
+const ActiveState = require('./states/activeState');
+const EndedState = require('./states/endedState');
 
 class AuctionContext {
   constructor(auction) {

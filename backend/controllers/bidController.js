@@ -1,4 +1,4 @@
-const BidOperation = require('../services/templates/BidOperation');
+const BidOperation = require('../services/templates/bidOperation');
 const Bid = require('../models/Bid');
 
 const bidOperation = new BidOperation();
