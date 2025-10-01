@@ -1,3 +1,5 @@
+// We applied the Strategy pattern to notification, enabling to maintain different notify strategies
+// This is a base class for notification for some abstract methods must be implemented by its child class.
 class NotificationStrategy {
   async sendWinnerNotification(recipient, auctionData) {
     throw new Error('sendWinnerNotification method must be implemented by subclasses');

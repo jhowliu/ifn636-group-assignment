@@ -17,7 +17,7 @@ const createAuction = async (req, res) => {
 // listing all aunction items that user created
 const getUserAuctions = async (req, res) => {
   try {
-    const auctions = await Auction.find({seller: req.user.id}).populate('seller', 'name')
+    const auctions = await Auction.find({seller: req.user.id}).populate('seller', 'name').sort({ ['createdAt']: -1 })
     res.json({
         success: true,
         data: auctions,

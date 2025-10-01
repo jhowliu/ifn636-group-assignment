@@ -5,7 +5,6 @@ const { connectDB } = require('./services/databaseService');
 const { AuctionTimerService, startAuctionScheduler } = require('./services/auctionScheduler.js');
 const NotificationObserver = require('./services/observers/notificationObserver');
 const AnalyticsObserver = require('./services/observers/analyticsObserver');
-const PaymentObserver = require('./services/observers/paymentObserver');
 
 dotenv.config();
 
@@ -17,12 +16,14 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/auctions', require('./routes/bidRoutes'), require('./routes/auctionRoutes'));
 app.use('/api/users/auctions', require('./routes/userAuctionRoutes'));
 
+// register the observers to listen "auction ended" event
+// for example: when auction ended, the handler will be execute immediately.
+// so, with this pattern, we don't need to maintain execution logic after auction ended everytime.
 const setupAuctionObservers = () => {
   const timerService = AuctionTimerService.getInstance();
   
   timerService.on('auctionEnded', NotificationObserver.handleAuctionEnd);
   timerService.on('auctionEnded', AnalyticsObserver.handleAuctionEnd);
-  timerService.on('auctionEnded', PaymentObserver.handleAuctionEnd);
   
   console.log('Auction observers configured successfully');
 };

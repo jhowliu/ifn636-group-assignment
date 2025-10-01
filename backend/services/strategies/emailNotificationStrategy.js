@@ -1,5 +1,6 @@
 const NotificationStrategy = require('./notificationStrategy');
 
+// This applied the OOP inheritance and implement all required methods from super calss.
 class EmailNotificationStrategy extends NotificationStrategy {
   async sendWinnerNotification(recipient, auctionData) {
     this.validateRecipient(recipient);

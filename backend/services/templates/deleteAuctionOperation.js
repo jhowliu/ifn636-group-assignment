@@ -12,6 +12,7 @@ class DeleteAuctionOperation extends AuctionOperationTemplate {
     return this.auctionContext.validateDelete(this.req.user.id);
   }
 
+  // Main business logic here
   async performOperation() {
     await Auction.findByIdAndDelete(this.auction._id);
 

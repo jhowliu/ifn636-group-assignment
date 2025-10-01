@@ -11,11 +11,13 @@ class NotificationObserver {
         console.log(`Winning amount: $${winningAmount}`);
         
         // Send winner notification via email
-        await notificationContext.sendWinnerNotification(winner, auctionData, 'email');
+        notificationContext.setStrategy('email');
+        await notificationContext.sendWinnerNotification(winner, auctionData);
         
         // Send winner notification via SMS if phone number is available
         if (winner.phone) {
-          await notificationContext.sendWinnerNotification(winner, auctionData, 'sms');
+          notificationContext.setStrategy('sms');
+          await notificationContext.sendWinnerNotification(winner, auctionData);
         }
       }
     } catch (error) {
