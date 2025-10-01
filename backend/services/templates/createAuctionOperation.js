@@ -30,6 +30,7 @@ class CreateAuctionOperation extends AuctionOperationTemplate {
     }
   }
 
+  // Main business logic here
   async performOperation() {
     const { title, description, startingPrice, category, startDate, endDate, images } = this.req.body;
     

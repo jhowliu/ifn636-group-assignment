@@ -132,13 +132,20 @@ const AuctionForm = ({ isEdit = false }) => {
           const response = await auctionService.getAuctionById(id);
           if (response.success) {
             const auction = response.data;
+            const toLocalDateTime = (utcDate) => {
+              const date = new Date(utcDate);
+              const tzOffset = date.getTimezoneOffset() * 60000;
+              const localDate = new Date(date.getTime() - tzOffset);
+              return localDate.toISOString().slice(0, 16);
+            };
+
             setFormData({
               title: auction.title,
               description: auction.description,
               startingPrice: auction.startingPrice.toString(),
               category: auction.category,
-              startDate: new Date(auction.startDate).toISOString(),
-              endDate: new Date(auction.endDate).toISOString(),
+              startDate: toLocalDateTime(auction.startDate),
+              endDate: toLocalDateTime(auction.endDate),
               images: auction.images.length > 0 ? auction.images : ['']
             });
           }

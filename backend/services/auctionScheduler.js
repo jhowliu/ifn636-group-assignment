@@ -3,6 +3,8 @@ const Bid = require('../models/Bid');
 const EventEmitter = require('./eventEmitter');
 const AuctionContext = require('./auctionContext');
 
+// our scheudlar service. this also applied the singleton pattern,
+// preventing concurrency problems if there are more than one instances.
 class AuctionTimerService extends EventEmitter {
   constructor() {
     super();
@@ -30,6 +32,7 @@ class AuctionTimerService extends EventEmitter {
         status: 'active',
         endDate: { $lte: now }
       });
+      console.log("check ended auctions", endedAuctions);
 
       for (const auction of endedAuctions) {
         await this.declareAuctionWinner(auction._id);
@@ -89,7 +92,7 @@ class AuctionTimerService extends EventEmitter {
         winningAmount: highestBid?.amount,
         hasBids: !!highestBid
       };
-
+      // send the 'auctionEnded' event to observers to execute what they need to do.
       this.emit('auctionEnded', auctionEndData);
       
       return auctionEndData;
