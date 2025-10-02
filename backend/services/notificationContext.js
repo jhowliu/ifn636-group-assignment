@@ -1,6 +1,8 @@
 const EmailNotificationStrategy = require('./strategies/emailNotificationStrategy');
 const SMSNotificationStrategy = require('./strategies/smsNotificationStrategy');
 
+// This is strategy context, maintaining all strategies here.
+// We can just call this context to send notification with specified method.
 class NotificationContext {
   constructor() {
     this.strategies = {
@@ -22,13 +24,15 @@ class NotificationContext {
   }
 
   async sendWinnerNotification(recipient, auctionData, method = 'email') {
-    const strategy = this.strategies[method];
+    if (!this.currentStrategy) {
+      this.currentStrategy = this.strategies[method];
+    }
     
-    if (!strategy) {
+    if (!this.currentStrategy) {
       throw new Error(`Notification strategy '${method}' not found`);
     }
 
-    return await strategy.sendWinnerNotification(recipient, auctionData);
+    return await this.currentStrategy.sendWinnerNotification(recipient, auctionData);
   }
 
   getAvailableStrategies() {

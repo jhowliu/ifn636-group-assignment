@@ -1,6 +1,10 @@
 const Auction = require('../../models/Auction');
 const AuctionContext = require('../auctionContext');
 
+// This applied the template method pattern, making this class can handle lifecycle of auction operations
+// because some control flow(verify permissions, logging, send response) are the same and can be reused,
+// we can just maintain into a execute function for these common functions.
+// With this benefit, if we have a new auction operation, we can inherit this class without duplicated code.
 class AuctionOperationTemplate {
   constructor() {
     if (new.target === AuctionOperationTemplate) {

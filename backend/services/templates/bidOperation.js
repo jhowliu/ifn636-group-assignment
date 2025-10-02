@@ -11,6 +11,7 @@ class BidOperation extends AuctionOperationTemplate {
     return this.auctionContext.validateBid(amount, bidderId);
   }
 
+  // Main business logic here
   async performOperation() {
     const { amount } = this.req.body;
     const bidderId = this.req.user.id;

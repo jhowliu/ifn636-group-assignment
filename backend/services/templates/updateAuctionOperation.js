@@ -12,9 +12,11 @@ class UpdateAuctionOperation extends AuctionOperationTemplate {
     return this.auctionContext.validateUpdate(this.req.body, this.req.user.id);
   }
 
+  // Main business logic here
   async performOperation() {
-    const allowedUpdates = ['title', 'startingPrice', 'currentPrice', 'description', 'images', 'endDate'];
+    const allowedUpdates = ['title', 'startingPrice', 'currentPrice', 'description', 'images', 'startDate', 'endDate'];
     const updates = {};
+
     
     allowedUpdates.forEach(field => {
       if (this.req.body[field] !== undefined) {
@@ -22,8 +24,13 @@ class UpdateAuctionOperation extends AuctionOperationTemplate {
         if (field === 'startingPrice') {
           updates['currentPrice'] = this.req.body[field];
         }
+        if (field === 'endDate' && new Date(updates['endDate']) > new Date()) {
+          updates['status'] = 'active';
+        }
       }
     });
+
+    console.log(updates,new Date(updates['endDate']), new Date());
 
     const updatedAuction = await Auction.findByIdAndUpdate(
       this.auction._id,

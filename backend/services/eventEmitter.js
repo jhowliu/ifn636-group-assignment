@@ -3,27 +3,21 @@ class EventEmitter {
     this.listeners = {};
   }
 
-  on(event, callback) {
+  // register new listeners
+  on(event, handler) {
     if (!this.listeners[event]) {
       this.listeners[event] = [];
     }
-    this.listeners[event].push(callback);
-  }
-
-  off(event, callback) {
-    if (!this.listeners[event]) return;
-    
-    this.listeners[event] = this.listeners[event].filter(
-      listener => listener !== callback
-    );
+    this.listeners[event].push(handler);
   }
 
   emit(event, data) {
     if (!this.listeners[event]) return;
     
-    this.listeners[event].forEach(callback => {
+    // execute the handler of listeners which listening the matched event.
+    this.listeners[event].forEach(handler => {
       try {
-        callback(data);
+        handler(data);
       } catch (error) {
         console.error(`Error in event listener for ${event}:`, error);
       }
