@@ -1,6 +1,8 @@
 # Auction Platform
 
-A complete MERN stack auction platform application that allows users to create, manage, and participate in auctions with real-time bidding functionality.
+A MERN stack auction platform that enables users to create, manage, and participate in real-time auctions. Users can register, bid, and track auctions seamlessly through a responsive web interface.
+
+
 
 ## Features
 
