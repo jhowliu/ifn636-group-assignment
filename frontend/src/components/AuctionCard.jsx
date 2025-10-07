@@ -10,9 +10,25 @@ export default function AuctionCard({ auction, currentUser }) {
 
     const getTimeRemaining = () => {
         if (!auction) return '';
-        
+
         const now = new Date();
+        const startDate = new Date(auction.startDate);
         const endDate = new Date(auction.endDate);
+
+        // Check if auction hasn't started yet
+        if (startDate > now) {
+            const diff = startDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            if (days > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s start`;
+            if (hours > 0) return `${hours}h ${minutes}m ${seconds}s start`;
+            return `${minutes}m ${seconds}s start`;
+        }
+
+        // Auction has started, show time until end
         const diff = endDate - now;
 
         if (diff <= 0) return 'ENDED';
@@ -24,7 +40,7 @@ export default function AuctionCard({ auction, currentUser }) {
 
         if (days > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s`;
         if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
-        return `${minutes}m ${seconds}s`;
+        return `${minutes}m ${seconds}s end`;
     };
 
     const startTimer = (e) => {
@@ -40,6 +56,7 @@ export default function AuctionCard({ auction, currentUser }) {
     };
 
     useEffect(() => {
+        setTimer(getTimeRemaining()); // Set initial timer immediately
         clearTimer()
     })
 
