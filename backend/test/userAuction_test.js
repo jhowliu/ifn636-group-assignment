@@ -71,10 +71,10 @@ describe("User Auction Controller", () => {
   
   // Get User Auctions //
   describe("getUserAuctions", () => {
-    let findStub, populateStub;
+    let findStub, populateStub, sortStub;
 
     beforeEach(() => {
-      populateStub = sandbox.stub().resolves([
+      sortStub = sandbox.stub().resolves([
         {
           _id: "1",
           title: "User Auction 1",
@@ -88,6 +88,7 @@ describe("User Auction Controller", () => {
           seller: { name: "Seller 2" }
         }
       ]);
+      populateStub = sandbox.stub().returns({ sort: sortStub });
       findStub = sandbox.stub(Auction, "find").returns({ populate: populateStub });
     });
 
@@ -117,7 +118,7 @@ describe("User Auction Controller", () => {
 
     it("should handle database errors", async () => {
       const errorMessage = "Database connection failed";
-      populateStub.rejects(new Error(errorMessage));
+      sortStub.rejects(new Error(errorMessage));
 
       await getUserAuctions(req, res);
 
